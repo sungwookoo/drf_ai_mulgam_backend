@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 import os
+import glob
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
@@ -36,9 +37,13 @@ class ArticleGallery2View(APIView):
 
         # os.system(order_text)
         shutil.rmtree('tmp/')
+
+        list_of_files = glob.glob('data/*')  # * means all if need specific format then *.csv
+        latest_file = max(list_of_files, key=os.path.getctime)
+
         data=Article()
         data.title = title
-        data.img_url = 'a'
-        data.category_id=1
+        data.img_url = latest_file
+        data.category_id=2
         data.save()
         return Response({"message": "성공"}, status=status.HTTP_200_OK)
