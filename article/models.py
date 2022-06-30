@@ -18,3 +18,13 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+class Comment(models.Model):
+    user = models.ForeignKey('user.User',verbose_name="작성자",on_delete=models.CASCADE)
+    article = models.ForeignKey(Article,verbose_name="게시글",on_delete=models.CASCADE)
+    content = models.TextField("댓글")
+    created_at = models.DateTimeField("댓글 작성 일", auto_now_add=True)
+    updated_at = models.DateTimeField("업데이트 일", auto_now=True)    
+
+    def __str__(self):
+        return f'id [ {self.id} ] {self.article.title} : {self.content} / {self.user.username}님이 작성한 댓글'
