@@ -10,11 +10,18 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ArticleSerializer(serializers.ModelSerializer):
-    category = serializers.SerializerMethodField()
+    def validate(self, data):
+        return data
 
+    def create(self, validated_data):
+        article = Article(**validated_data)
+        article.save()
+        return article
 
-    def get_category(self, obj):
-        return [category.name for category in obj.category.all()]
+    def update(self, instance, validated_data):
+        instance.title = validated_data['title']
+        instance.save()
+        return instance
 
     class Meta:
         model = Article
