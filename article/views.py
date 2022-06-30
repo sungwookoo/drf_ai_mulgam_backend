@@ -15,7 +15,10 @@ from .models import Article
 class ArticleGallery1View(APIView):
 
     def get(self, request):
-        return Response(status=status.HTTP_200_OK)
+        articles = Article.objects.filter(category_id=1)
+
+        return Response({"message": "겟입니당"}, status=status.HTTP_200_OK)
+
 
     def post(self, request):
         title = request.data.get("title", "")
@@ -48,6 +51,27 @@ class ArticleGallery1View(APIView):
         data.category_id = 1
         data.save()
         return Response({"message": "성공"}, status=status.HTTP_200_OK)
+
+    def put(self, request, article_id):
+        try:
+            article = Article.objects.get(id=article_id)
+        except Article.DoesNotExist:
+            return Response({"error": "존재하지 않는 게시물입니다."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # article_serializer = ArticleSerializer(article, data=request.data, partial=True)
+        # article_serializer.is_valid(raise_exception=True)
+        # article_serializer.save()
+
+        return Response({"message": "put method"}, status=status.HTTP_200_OK)
+
+    def delete(self, request):
+        # user = request.user
+        article = Article.objects.filter(user_id=1)
+        print(article)
+        article.delete()
+        return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
+
 
 class ArticleGallery2View(APIView):
 
