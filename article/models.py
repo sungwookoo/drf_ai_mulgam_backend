@@ -5,6 +5,8 @@ from django.db import models
 class Category(models.Model):
     name = models.CharField(max_length=200, db_index=True)
 
+    def __str__(self):
+        return self.name
 
 class Article(models.Model):
     user_id = models.ForeignKey('user.User', verbose_name="작성자", on_delete=models.SET_NULL, null=True)
@@ -13,3 +15,6 @@ class Article(models.Model):
     img_url = models.CharField("img_url", max_length=200)
     created_at = models.DateTimeField("만든 날", auto_now_add=True)
     updated_at = models.DateTimeField("업데이트 한 날", auto_now=True)
+
+    def __str__(self):
+        return self.title
