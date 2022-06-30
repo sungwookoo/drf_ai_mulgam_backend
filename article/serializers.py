@@ -10,24 +10,20 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ArticleSerializer(serializers.ModelSerializer):
-    category = serializers.SerializerMethodField()
-    user = serializers.SerializerMethodField()
-
-    def get_user(self, obj):
-        return obj.user.username
-
-    def get_category(self, obj):
-        return [category.name for category in obj.category.all()]
+    def validate(self, data):
+        print(data)
+        return data
 
     def create(self, validated_data):
-
         article = Article(**validated_data)
+        print('val=', validated_data)
         article.save()
         return article
 
     def update(self, instance, validated_data):
         # instance에는 입력된 object가 담긴다.
-        instance.title = validated_data.title
+        print(instance,"or", validated_data)
+        instance.title = validated_data['title']
         instance.save()
         return instance
 
