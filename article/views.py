@@ -9,7 +9,11 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 import shutil
 from .models import Article
+from .models import Comment as CommentModel
 # from gallery1.main import mix
+
+from article.serializers import CommentSerializer
+
 
 
 class ArticleGallery1View(APIView):
@@ -76,3 +80,33 @@ class ArticleGallery2View(APIView):
         data.category_id=2
         data.save()
         return Response({"message": "성공"}, status=status.HTTP_200_OK)
+
+class CommentView(APIView):
+    # 작성자가 로그인한 경우에만 댓글 작성 할 수 있도록 권한 설정 
+    # permission_classes = [permissions.IsAuthenticated]
+
+    def get(self,request,comment_id):
+        comment = CommentModel.objects.get(id=comment_id)
+        serialized_data = CommentSerializer(comment, many=True).data   #queryset
+        return Response(serialized_data, status=status.HTTP_200_OK)
+
+    #댓글 작성
+    def post(self,request):
+        request.data["user"] = request.user.id # 로그인한 사용자
+        comment_serializer = CommentSerializer(data=request.data)
+
+        if comment_serializer.is_valid():
+            comment_serializer.save()
+            return Response(comment_serializer.data,status=status.HTTP_200_OK)
+        else:
+            return Response(comment_serializer.data,status=status.HTTP_400_BAD_REQUEST)
+
+    #업데이트
+    def put(self,request):
+        return Response({"message":"업데이트 완료!"},status=status.HTTP_200_OK)
+
+    #삭제
+    def delete(self,request,comment_id):
+        comment = CommentModel.objects.get(id=comment_id)
+        comment.delete()
+        return Response(status=status.HTTP_200_OK)
