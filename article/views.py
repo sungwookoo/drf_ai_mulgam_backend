@@ -9,6 +9,8 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 import shutil
 from .models import Article
+# from gallery1.main import mix
+
 
 class ArticleGallery1View(APIView):
 
@@ -16,9 +18,36 @@ class ArticleGallery1View(APIView):
         return Response(status=status.HTTP_200_OK)
 
     def post(self, request):
+        title = request.data.get("title", "")
+        file = request.data.get("file")
+        num = request.data.get("num", "")
+        default_storage.save('gallery1/input/input_img.jpg', ContentFile(file.read()))
 
-        return Response({"message":"성공"}, status=status.HTTP_200_OK)
+        model = ['gallery1/models/composition_vii.t7',
+                 'gallery1/models/la_muse.t7',
+                 'gallery1/models/starry_night.t7',
+                 'gallery1/models/the_wave.t7',
+                 'gallery1/models/candy.t7',
+                 'gallery1/models/feathers.t7',
+                 'gallery1/models/mosaic.t7',
+                 'gallery1/models/the_scream.t7',
+                 'gallery1/models/udnie.t7'
+                 ]
 
+        model_num = model[int(num)]
+        mix(model_num)
+
+        shutil.rmtree('gallery1/input/')
+
+        list_of_files = glob.glob('gallery1/output/*')  # * means all if need specific format then *.csv
+        latest_file = max(list_of_files, key=os.path.getctime)
+
+        data = Article()
+        data.title = title
+        data.img_url = latest_file
+        data.category_id = 1
+        data.save()
+        return Response({"message": "성공"}, status=status.HTTP_200_OK)
 
 class ArticleGallery2View(APIView):
 
