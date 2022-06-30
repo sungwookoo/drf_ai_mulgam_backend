@@ -33,9 +33,9 @@ class ArticleGallery2View(APIView):
         default_storage.save('tmp/content.jpg', ContentFile(file1.read()))
         default_storage.save('tmp/content2.jpg', ContentFile(file2.read()))
 
-        # order_text ='style_transfer tmp/content.jpg tmp/content2.jpg'
+        order_text ='style_transfer tmp/content.jpg tmp/content2.jpg'
 
-        # os.system(order_text)
+        os.system(order_text)
         shutil.rmtree('tmp/')
 
         list_of_files = glob.glob('data/*')  # * means all if need specific format then *.csv
