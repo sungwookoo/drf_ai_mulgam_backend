@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 import shutil
 from .models import Article
-from .serializers import ArticleSerializer,CategorySerializer
+from .serializers import ArticleSerializer
 # from gallery1.main import mix
 
 
@@ -19,7 +19,6 @@ class ArticleGallery1View(APIView):
         articles = Article.objects.filter(category_id=1)
         articles = ArticleSerializer(articles, many=True).data
         return Response(articles, status=status.HTTP_200_OK)
-
 
     def post(self, request):
         title = request.data.get("title", "")
@@ -47,7 +46,7 @@ class ArticleGallery1View(APIView):
         latest_file = max(list_of_files, key=os.path.getctime)
 
         user = request.user.id
-        article = {'user': user, 'title':title,'img_url':latest_file,'category':1}
+        article = {'user': user, 'title': title, 'img_url': latest_file, 'category': 1}
         article_serializer = ArticleSerializer(data=article)
         if article_serializer.is_valid():
             article_serializer.save()
@@ -102,8 +101,8 @@ class ArticleGallery2View(APIView):
 
         list_of_files = glob.glob('data/*')  # * means all if need specific format then *.csv
         latest_file = max(list_of_files, key=os.path.getctime)
-        user=request.user.id
-        article = {'user':user, 'title':title,'img_url':latest_file,'category':2}
+        user = request.user.id
+        article = {'user': user, 'title': title, 'img_url': latest_file, 'category': 2}
         article_serializer = ArticleSerializer(data=article)
         if article_serializer.is_valid():
             article_serializer.save()
@@ -128,7 +127,6 @@ class ArticleGallery2View(APIView):
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-
     def delete(self, request, article_id):
         user = request.user.id
         article = Article.objects.filter(id=article_id)
@@ -144,9 +142,10 @@ class ArticleGallery2View(APIView):
 class ArticleMyGalleryView(APIView):
 
     def get(self, request):
-        user=request.user.id
+        user = request.user.id
         articles = Article.objects.filter(user_id=user)
         articles = ArticleSerializer(articles, many=True).data
+
         return Response(articles, status=status.HTTP_200_OK)
 
     def delete(self, request, article_id):
@@ -157,3 +156,6 @@ class ArticleMyGalleryView(APIView):
         if user == article[0].user_id:
             article.delete()
             return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
+
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
