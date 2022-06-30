@@ -98,9 +98,9 @@ class ArticleGallery2View(APIView):
         default_storage.save('tmp/content.jpg', ContentFile(file1.read()))
         default_storage.save('tmp/content2.jpg', ContentFile(file2.read()))
 
-        # order_text ='style_transfer tmp/content.jpg tmp/content2.jpg'
-        #
-        # os.system(order_text)
+        order_text ='style_transfer tmp/content.jpg tmp/content2.jpg'
+
+        os.system(order_text)
         shutil.rmtree('tmp/')
 
         list_of_files = glob.glob('data/*')  # * means all if need specific format then *.csv
@@ -115,12 +115,34 @@ class ArticleGallery2View(APIView):
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        data=Article()
-        data.title = title
-        data.img_url = latest_file
-        data.category_id=2
-        data.save()
-        return Response({"message": "성공"}, status=status.HTTP_200_OK)
+    def put(self, request, article_id):
+        try:
+            article = Article.objects.get(id=article_id)
+        except Article.DoesNotExist:
+            return Response({"error": "존재하지 않는 게시물입니다."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        article_serializer = ArticleSerializer(article, data=request.data, partial=True)
+
+        if article_serializer.is_valid(raise_exception=True):
+            article_serializer.save()
+            return Response(status=status.HTTP_200_OK)
+
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, article_id):
+        user = request.user.id
+        article = Article.objects.filter(id=article_id)
+        print(user)
+        print(article[0].user_id)
+        if user == article[0].user_id:
+            article.delete()
+
+            return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
+        return Response({"message": "실패."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 class CommentView(APIView):
@@ -153,32 +175,7 @@ class CommentView(APIView):
         comment.delete()
         return Response(status=status.HTTP_200_OK)
 
-    def put(self, request, article_id):
-        try:
-            article = Article.objects.get(id=article_id)
-        except Article.DoesNotExist:
-            return Response({"error": "존재하지 않는 게시물입니다."},
-                            status=status.HTTP_400_BAD_REQUEST)
 
-        article_serializer = ArticleSerializer(article, data=request.data, partial=True)
-
-        if article_serializer.is_valid(raise_exception=True):
-            article_serializer.save()
-            return Response(status=status.HTTP_200_OK)
-
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, article_id):
-        user = request.user.id
-        article = Article.objects.filter(id=article_id)
-        print(user)
-        print(article[0].user_id)
-        if user == article[0].user_id:
-            article.delete()
-
-            return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
-        return Response({"message": "실패."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ArticleMyGalleryView(APIView):
