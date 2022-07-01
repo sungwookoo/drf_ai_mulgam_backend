@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework import status
 from django.contrib.auth import login, logout, authenticate
-from user.serializers import UserSerializer
+from user.serializers import UserSerializer, UserCreateSerializer
 
 
 class UserView(APIView):  # CBV 방식
@@ -19,8 +19,12 @@ class UserView(APIView):  # CBV 방식
         user = request.user
         return Response(UserSerializer(user).data)
 
+    # 회원가입
     def post(self, request):
-        return Response({'message': 'post method!!'})
+        serializer = UserCreateSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request):
         return Response({'message': 'put method!!'})
@@ -31,7 +35,7 @@ class UserView(APIView):  # CBV 방식
 
 class UserApiView(APIView):
     # 로그인
-    # permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request):
         username = request.data.get('username', '')
