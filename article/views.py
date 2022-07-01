@@ -11,7 +11,7 @@ import shutil
 from .models import Article
 from .models import Comment as CommentModel
 from .serializers import ArticleSerializer
-# from gallery1.main import mix
+from gallery1.main import mix
 
 from article.serializers import CommentSerializer
 
@@ -42,7 +42,7 @@ class ArticleGallery1View(APIView):
                  ]
 
         model_num = model[int(num)]
-        # mix(model_num)
+        mix(model_num)
 
         shutil.rmtree('gallery1/input/')
 
