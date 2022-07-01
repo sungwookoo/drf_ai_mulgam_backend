@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from datetime import datetime
 
 # import os
 # print(os.getcwd())
@@ -32,6 +33,6 @@ def mix(num):
 
     # cv2.imshow('img', img)
     # cv2.imshow('output', output)
-    cv2.imwrite('gallery1/output/output.jpg', output)
+    cv2.imwrite(f'gallery1/output/{datetime.now().strftime("%Y%m%d-%H%M%S%f")}.jpg', output)
     # cv2.waitKey(0)
 
