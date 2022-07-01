@@ -154,14 +154,15 @@ class CommentView(APIView):
     # 작성자가 로그인한 경우에만 댓글 작성 할 수 있도록 권한 설정 
     # permission_classes = [permissions.IsAuthenticated]
 
-    def get(self,request,comment_id):
-        comment = CommentModel.objects.get(id=comment_id)
+    def get(self,request,article_id):
+        comment = CommentModel.objects.filter(article=article_id)
         serialized_data = CommentSerializer(comment, many=True).data   #queryset
         return Response(serialized_data, status=status.HTTP_200_OK)
 
-    #댓글 작성
-    def post(self,request):
+    #댓글 작성 article id
+    def post(self,request,article_id):
         request.data["user"] = request.user.id # 로그인한 사용자
+        request.data["article"] = article_id
         comment_serializer = CommentSerializer(data=request.data)
 
         if comment_serializer.is_valid():
@@ -171,8 +172,14 @@ class CommentView(APIView):
             return Response(comment_serializer.data,status=status.HTTP_400_BAD_REQUEST)
 
     #업데이트
-    def put(self,request):
-        return Response({"message":"업데이트 완료!"},status=status.HTTP_200_OK)
+    def put(self,request,comment_id):
+        comment = CommentModel.objects.get(id=comment_id)
+        comment_serializer = CommentSerializer(comment, data=request.data, partial=True)
+        if comment_serializer.is_valid():
+            comment_serializer.save()
+            return Response(comment_serializer.data, status=status.HTTP_200_OK)
+
+        return Response(comment_serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
     #삭제
     def delete(self,request,comment_id):
