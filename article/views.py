@@ -57,6 +57,7 @@ class ArticleGallery1View(APIView):
             return Response(status=status.HTTP_200_OK)
 
         else:
+            os.remove(latest_file)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, article_id):
@@ -79,6 +80,7 @@ class ArticleGallery1View(APIView):
         print(article[0].user_id)
         if user == article[0].user_id:
             article.delete()
+            os.remove(article[0].img_url)
             return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
 
         return Response({"message": "실패."}, status=status.HTTP_400_BAD_REQUEST)
@@ -101,6 +103,7 @@ class ArticleGallery2View(APIView):
         order_text ='style_transfer tmp/content.jpg tmp/content2.jpg'
 
         os.system(order_text)
+
         shutil.rmtree('tmp/')
 
         list_of_files = glob.glob('data/*')  # * means all if need specific format then *.csv
@@ -113,6 +116,7 @@ class ArticleGallery2View(APIView):
             return Response(status=status.HTTP_200_OK)
 
         else:
+            os.remove(latest_file)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, article_id):
@@ -137,6 +141,7 @@ class ArticleGallery2View(APIView):
         print(user)
         print(article[0].user_id)
         if user == article[0].user_id:
+            os.remove(article[0].img_url)
             article.delete()
 
             return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
@@ -194,6 +199,7 @@ class ArticleMyGalleryView(APIView):
         print(article[0].user_id)
         if user == article[0].user_id:
             article.delete()
+            os.remove(article[0].img_url)
             return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
 
         else:
