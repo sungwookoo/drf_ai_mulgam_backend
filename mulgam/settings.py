@@ -32,8 +32,9 @@ def get_secret(setting, secrets=secrets):
     try:
         return secrets[setting]
     except KeyError:
-        error_msg = "Set the {} environment variable".format(setting)
-        raise ImproperlyConfigured(error_msg)
+        return ""
+        # error_msg = "Set the {} environment variable".format(setting)
+        # raise ImproperlyConfigured(error_msg)
 
 
 SECRET_KEY = get_secret("SECRET_KEY")
@@ -41,7 +42,9 @@ SECRET_KEY = get_secret("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# EC2 서버 api 테스트를 위해 등록
+ALLOWED_HOSTS = [get_secret("ALLOWED_HOSTS")]
+# ALLOWED_HOSTS = []
 
 # Application definition
 
