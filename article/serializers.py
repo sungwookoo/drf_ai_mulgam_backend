@@ -19,7 +19,9 @@ class ArticleSerializer(serializers.ModelSerializer):
         return article
 
     def update(self, instance, validated_data):
+        print(validated_data)
         instance.title = validated_data['title']
+        print(instance.title)
         instance.save()
         return instance
 
