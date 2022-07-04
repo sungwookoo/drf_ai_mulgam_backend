@@ -76,11 +76,9 @@ class ArticleGallery1View(APIView):
     def delete(self, request, article_id):
         user = request.user.id
         article = Article.objects.filter(id=article_id)
-        print(user)
-        print(article[0].user_id)
         if user == article[0].user_id:
-            article.delete()
             os.remove(article[0].img_url)
+            article.delete()
             return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
 
         return Response({"message": "실패."}, status=status.HTTP_400_BAD_REQUEST)
@@ -138,8 +136,6 @@ class ArticleGallery2View(APIView):
     def delete(self, request, article_id):
         user = request.user.id
         article = Article.objects.filter(id=article_id)
-        print(user)
-        print(article[0].user_id)
         if user == article[0].user_id:
             os.remove(article[0].img_url)
             article.delete()
@@ -202,11 +198,9 @@ class ArticleMyGalleryView(APIView):
     def delete(self, request, article_id):
         user = request.user.id
         article = Article.objects.filter(id=article_id)
-        print(user)
-        print(article[0].user_id)
         if user == article[0].user_id:
-            article.delete()
             os.remove(article[0].img_url)
+            article.delete()
             return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
 
         else:
