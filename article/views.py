@@ -76,8 +76,6 @@ class ArticleGallery1View(APIView):
     def delete(self, request, article_id):
         user = request.user.id
         article = Article.objects.filter(id=article_id)
-        print(user)
-        print(article[0].user_id)
         if user == article[0].user_id:
             os.remove(article[0].img_url)
             article.delete()
@@ -138,8 +136,6 @@ class ArticleGallery2View(APIView):
     def delete(self, request, article_id):
         user = request.user.id
         article = Article.objects.filter(id=article_id)
-        print(user)
-        print(article[0].user_id)
         if user == article[0].user_id:
             os.remove(article[0].img_url)
             article.delete()
@@ -202,10 +198,6 @@ class ArticleMyGalleryView(APIView):
     def delete(self, request, article_id):
         user = request.user.id
         article = Article.objects.filter(id=article_id)
-        print(article)
-        print(user)
-        print(article_id)
-        print(article[0].user_id)
         if user == article[0].user_id:
             os.remove(article[0].img_url)
             article.delete()
