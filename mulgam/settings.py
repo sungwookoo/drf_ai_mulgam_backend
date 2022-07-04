@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 import os
 import json
@@ -60,20 +60,21 @@ INSTALLED_APPS = [
     'user',
     'article',
     'corsheaders',
-
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [ # 기본적인 view 접근 권한 지정
+    'DEFAULT_PERMISSION_CLASSES': [  # 기본적인 view 접근 권한 지정
         'rest_framework.permissions.AllowAny'
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [ # session 혹은 token을 인증 할 클래스 설정
+    'DEFAULT_AUTHENTICATION_CLASSES': [  # session 혹은 token을 인증 할 클래스 설정
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication'
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_METADATA_CLASS': 'rest_framework.metadata.SimpleMetadata'
     ,
-    'DEFAULT_PARSER_CLASSES': [ # request.data 속성에 액세스 할 때 사용되는 파서 지정
+    'DEFAULT_PARSER_CLASSES': [  # request.data 속성에 액세스 할 때 사용되는 파서 지정
         'rest_framework.parsers.JSONParser',
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser'
@@ -163,30 +164,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.User'
 
+
 CORS_ORIGIN_ALLOW_ALL=True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_METHODS = (
-   'DELETE',
-   'GET',
-   'OPTIONS',
-   'PATCH',
-   'POST',
-   'PUT',
-)
-CORS_ALLOW_HEADERS = (
-   'accept',
-   'accept-encoding',
-   'authorization',
-   'content-type',
-   'dnt',
-   'origin',
-   'user-agent',
-   'x-csrftoken',
-   'x-requested-with',
-)
-APPEND_SLASH = False
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
     "http://localhost:5500",
 ]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True
+}
