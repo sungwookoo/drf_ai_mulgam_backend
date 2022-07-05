@@ -27,6 +27,7 @@ class ArticleGallery1View(APIView):
     def post(self, request):
         title = request.data.get("title", "")
         file = request.data.get("file")
+        user = request.data.get("user", "")
         num = request.data.get("num", "")
         default_storage.save('gallery1/input/input_img.jpg', ContentFile(file.read()))
 
@@ -50,7 +51,6 @@ class ArticleGallery1View(APIView):
         latest_file = max(list_of_files, key=os.path.getctime)
         img_url = os.path.abspath(latest_file)
 
-        user = request.user.id
         article = {'user': user, 'title': title, 'img_url': img_url, 'category': 1}
         article_serializer = ArticleSerializer(data=article)
         if article_serializer.is_valid():
