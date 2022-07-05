@@ -1,3 +1,4 @@
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework import status
@@ -164,18 +165,22 @@ class ArticleGallery2View(APIView):
 class CommentView(APIView):
     # 작성자가 로그인한 경우에만 댓글 작성 할 수 있도록 권한 설정 
     # permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self,request,article_id):
         comment = CommentModel.objects.filter(article=article_id)
+        # username = request.user.name
         serialized_data = CommentSerializer(comment, many=True).data   #queryset
+        # serialized_data["username"]=username
         return Response(serialized_data, status=status.HTTP_200_OK)
 
     #댓글 작성 article id
     def post(self,request,article_id):
         data = request.data.copy()
-        data["user"] = 1
+        data["user"] = request.user.id #ㅍㄹㅌ에서 요청한 데이터
         data["article"] = article_id
         data["content"] = request.data.get("content","")
+        data["id"] = request.data.get("comment_id","")
         comment_serializer = CommentSerializer(data=data)
         print(comment_serializer.is_valid())
         if comment_serializer.is_valid():
