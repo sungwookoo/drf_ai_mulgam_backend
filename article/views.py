@@ -48,9 +48,10 @@ class ArticleGallery1View(APIView):
 
         list_of_files = glob.glob('gallery1/output/*')  # * means all if need specific format then *.csv
         latest_file = max(list_of_files, key=os.path.getctime)
+        img_url = os.path.abspath(latest_file)
 
         user = request.user.id
-        article = {'user': user, 'title': title, 'img_url': latest_file, 'category': 1}
+        article = {'user': user, 'title': title, 'img_url': img_url, 'category': 1}
         article_serializer = ArticleSerializer(data=article)
         if article_serializer.is_valid():
             article_serializer.save()
@@ -115,8 +116,9 @@ class ArticleGallery2View(APIView):
 
         list_of_files = glob.glob('data/*')  # * means all if need specific format then *.csv
         latest_file = max(list_of_files, key=os.path.getctime)
+        img_url= os.path.abspath(latest_file)
         user = request.user.id
-        article = {'user': user, 'title': title, 'img_url': latest_file, 'category': 2}
+        article = {'user': user, 'title': title, 'img_url': img_url, 'category': 2}
         article_serializer = ArticleSerializer(data=article)
         if article_serializer.is_valid():
             article_serializer.save()
@@ -143,7 +145,8 @@ class ArticleGallery2View(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, article_id):
-        user = request.user.id
+        user = self.request.user.id
+        print(user)
         article = Article.objects.filter(id=article_id)
         if user == article[0].user_id:
             try:
