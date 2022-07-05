@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework import status
 from django.contrib.auth import login, logout, authenticate
+
+from user.models import User
 from user.serializers import UserSerializer, UserCreateSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -26,6 +28,8 @@ class UserView(APIView):  # CBV 방식
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
     def put(self, request):
         return Response({'message': 'put method!!'})
@@ -55,10 +59,17 @@ class UserLogoutView(APIView):
     def post(self, request):
         try:
             refresh_token = request.data["refresh_token"]
-            print(refresh_token)
             token = RefreshToken(refresh_token)
             token.blacklist()
 
             return Response(status=status.HTTP_200_OK)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserInfoView(APIView):
+
+    def post(self, request):
+        user_id = request.data.get('user_id')
+        user = User.objects.get(id=int(user_id))
+        return Response(UserSerializer(user).data)
