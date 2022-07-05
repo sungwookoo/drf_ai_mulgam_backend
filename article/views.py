@@ -163,20 +163,22 @@ class CommentView(APIView):
 
     #댓글 작성 article id
     def post(self,request,article_id):
-        request.data["user"] = request.user.id # 로그인한 사용자
-        request.data["article"] = article_id
-        comment_serializer = CommentSerializer(data=request.data)
-
+        data = request.data.copy()
+        data["user"] = 1
+        data["article"] = article_id
+        data["content"] = request.data.get("content","")
+        comment_serializer = CommentSerializer(data=data)
+        print(comment_serializer.is_valid())
         if comment_serializer.is_valid():
             comment_serializer.save()
-            return Response(comment_serializer.data,status=status.HTTP_200_OK)
+            return Response({"result":"댓글 작성 완료"},status=status.HTTP_200_OK)
         else:
-            return Response(comment_serializer.data,status=status.HTTP_400_BAD_REQUEST)
+            return Response({"result":"댓글 작성 실패"},status=status.HTTP_400_BAD_REQUEST)
 
     #업데이트
     def put(self,request,comment_id):
-        comment = CommentModel.objects.get(id=comment_id)
-        comment_serializer = CommentSerializer(comment, data=request.data, partial=True)
+        content = CommentModel.objects.get(id=comment_id)
+        comment_serializer = CommentSerializer(content, data=request.data, partial=True)
         if comment_serializer.is_valid():
             comment_serializer.save()
             return Response(comment_serializer.data, status=status.HTTP_200_OK)
