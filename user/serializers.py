@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         # 모든 필드를 사용하고 싶을 경우 fields = "__all__"로 사용
         # fields = "__all__"
-        fields = ["id"]  # 부여되는 아이디만
+        fields = ["id", "username"]
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
