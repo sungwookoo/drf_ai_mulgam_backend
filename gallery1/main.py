@@ -10,7 +10,6 @@ def mix(num):
     net = cv2.dnn.readNetFromTorch(num)
 
     img = cv2.imread('gallery1/input/input_img.jpg')
-    print(img)
     h, w, c = img.shape
     img = cv2.resize(img, dsize=(500, int(h / w * 500)))
 
