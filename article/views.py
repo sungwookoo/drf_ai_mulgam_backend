@@ -105,6 +105,7 @@ class ArticleGallery2View(APIView):
         title = request.data.get("title", "")
         file1 = request.data.get("file1")
         file2 = request.data.get("file2")
+        user = request.data.get("user","")
         default_storage.save('tmp/content.jpg', ContentFile(file1.read()))
         default_storage.save('tmp/content2.jpg', ContentFile(file2.read()))
 
@@ -117,7 +118,6 @@ class ArticleGallery2View(APIView):
         list_of_files = glob.glob('data/*')  # * means all if need specific format then *.csv
         latest_file = max(list_of_files, key=os.path.getctime)
         img_url= os.path.abspath(latest_file)
-        user = request.user.id
         article = {'user': user, 'title': title, 'img_url': img_url, 'category': 2}
         article_serializer = ArticleSerializer(data=article)
         if article_serializer.is_valid():
