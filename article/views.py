@@ -208,7 +208,7 @@ class CommentView(APIView):
 
 
 class ArticleMyGalleryView(APIView):
-
+    authentication_classes = [JWTAuthentication]
     def get(self, request):
         user = request.user.id
         articles = Article.objects.filter(user_id=user)
