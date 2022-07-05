@@ -96,7 +96,6 @@ class ArticleGallery1View(APIView):
 
 
 class ArticleGallery2View(APIView):
-
     def get(self, request):
         articles = Article.objects.filter(category_id=2)
         articles = ArticleSerializer(articles, many=True).data
@@ -106,7 +105,7 @@ class ArticleGallery2View(APIView):
         title = request.data.get("title", "")
         file1 = request.data.get("file1")
         file2 = request.data.get("file2")
-        user = request.data.get("user","")
+        user = request.data.get("user")
         default_storage.save('tmp/content.jpg', ContentFile(file1.read()))
         default_storage.save('tmp/content2.jpg', ContentFile(file2.read()))
 
