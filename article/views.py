@@ -96,7 +96,6 @@ class ArticleGallery1View(APIView):
 
 
 class ArticleGallery2View(APIView):
-
     def get(self, request):
         articles = Article.objects.filter(category_id=2)
         articles = ArticleSerializer(articles, many=True).data
@@ -106,7 +105,7 @@ class ArticleGallery2View(APIView):
         title = request.data.get("title", "")
         file1 = request.data.get("file1")
         file2 = request.data.get("file2")
-        user = request.data.get("user","")
+        user = request.data.get("user")
         default_storage.save('tmp/content.jpg', ContentFile(file1.read()))
         default_storage.save('tmp/content2.jpg', ContentFile(file2.read()))
 
@@ -177,7 +176,7 @@ class CommentView(APIView):
     #댓글 작성 article id
     def post(self,request,article_id):
         data = request.data.copy()
-        data["user"] = request.user.id #ㅍㄹㅌ에서 요청한 데이터
+        data["user"] = request.data.get("user")
         data["article"] = article_id
         data["content"] = request.data.get("content","")
         data["id"] = request.data.get("comment_id","")
