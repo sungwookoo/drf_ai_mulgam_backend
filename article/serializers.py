@@ -34,7 +34,6 @@ class CommentSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField(read_only=True)
 
     def get_username(self,obj):
-        # return [user.name for user in obj.user.all()]
         return obj.user.username
     class Meta:
         model = Comment
