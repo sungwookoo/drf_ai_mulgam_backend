@@ -176,7 +176,7 @@ class CommentView(APIView):
     #댓글 작성 article id
     def post(self,request,article_id):
         data = request.data.copy()
-        data["user"] = request.user.id #ㅍㄹㅌ에서 요청한 데이터
+        data["user"] = request.data.get("user")
         data["article"] = article_id
         data["content"] = request.data.get("content","")
         data["id"] = request.data.get("comment_id","")
