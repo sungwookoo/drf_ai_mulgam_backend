@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 import os
 import glob
+import copy
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
@@ -175,11 +176,13 @@ class CommentView(APIView):
 
     #댓글 작성 article id
     def post(self,request,article_id):
-        data = request.data.copy()
-        data["user"] = request.data.get("user")
+        print("start")
+        print(request.user.id)
+        data = copy.deepcopy(request.data)
+        data["user"] = request.user.id
         data["article"] = article_id
         data["content"] = request.data.get("content","")
-        data["id"] = request.data.get("comment_id","")
+        print(data)
         comment_serializer = CommentSerializer(data=data)
         print(comment_serializer.is_valid())
         if comment_serializer.is_valid():
@@ -200,9 +203,13 @@ class CommentView(APIView):
 
     #삭제
     def delete(self,request,comment_id):
-        comment = CommentModel.objects.get(id=comment_id)
-        comment.delete()
-        return Response(status=status.HTTP_200_OK)
+        user = request.user.id
+        comment = CommentModel.objects.filter(id=comment_id)
+        if user == comment.user_id:
+            comment.delete()
+            return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "삭제 권한이 없습니다."},status=status.HTTP_400_BAD_REQUEST)
 
 
 
