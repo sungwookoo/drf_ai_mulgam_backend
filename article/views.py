@@ -27,6 +27,7 @@ class ArticleGallery1View(APIView):
     def post(self, request):
         title = request.data.get("title", "")
         file = request.data.get("file")
+        user = request.data.get("user", "")
         num = request.data.get("num", "")
         default_storage.save('gallery1/input/input_img.jpg', ContentFile(file.read()))
 
@@ -48,9 +49,9 @@ class ArticleGallery1View(APIView):
 
         list_of_files = glob.glob('gallery1/output/*')  # * means all if need specific format then *.csv
         latest_file = max(list_of_files, key=os.path.getctime)
+        img_url = os.path.abspath(latest_file)
 
-        user = request.user.id
-        article = {'user': user, 'title': title, 'img_url': latest_file, 'category': 1}
+        article = {'user': user, 'title': title, 'img_url': img_url, 'category': 1}
         article_serializer = ArticleSerializer(data=article)
         if article_serializer.is_valid():
             article_serializer.save()
@@ -83,7 +84,10 @@ class ArticleGallery1View(APIView):
         print(user)
         article = Article.objects.filter(id=article_id)
         if user == article[0].user_id:
-            os.remove(article[0].img_url)
+            try:
+                os.remove(article[0].img_url)
+            except:
+                article.delete()
             article.delete()
 
             return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
@@ -101,6 +105,7 @@ class ArticleGallery2View(APIView):
         title = request.data.get("title", "")
         file1 = request.data.get("file1")
         file2 = request.data.get("file2")
+        user = request.data.get("user","")
         default_storage.save('tmp/content.jpg', ContentFile(file1.read()))
         default_storage.save('tmp/content2.jpg', ContentFile(file2.read()))
 
@@ -112,8 +117,8 @@ class ArticleGallery2View(APIView):
 
         list_of_files = glob.glob('data/*')  # * means all if need specific format then *.csv
         latest_file = max(list_of_files, key=os.path.getctime)
-        user = request.user.id
-        article = {'user': user, 'title': title, 'img_url': latest_file, 'category': 2}
+        img_url= os.path.abspath(latest_file)
+        article = {'user': user, 'title': title, 'img_url': img_url, 'category': 2}
         article_serializer = ArticleSerializer(data=article)
         if article_serializer.is_valid():
             article_serializer.save()
@@ -140,10 +145,14 @@ class ArticleGallery2View(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, article_id):
-        user = request.user.id
+        user = self.request.user.id
+        print(user)
         article = Article.objects.filter(id=article_id)
         if user == article[0].user_id:
-            os.remove(article[0].img_url)
+            try:
+                os.remove(article[0].img_url)
+            except:
+                article.delete()
             article.delete()
 
             return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
@@ -207,7 +216,10 @@ class ArticleMyGalleryView(APIView):
         user = request.user.id
         article = Article.objects.filter(id=article_id)
         if user == article[0].user_id:
-            os.remove(article[0].img_url)
+            try:
+                os.remove(article[0].img_url)
+            except:
+                article.delete()
             article.delete()
             return Response({"message": "게시물이 삭제되었습니다."}, status=status.HTTP_200_OK)
 
