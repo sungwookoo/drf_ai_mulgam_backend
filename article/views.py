@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 import os
 import glob
+import copy
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
@@ -162,31 +163,24 @@ class ArticleGallery2View(APIView):
 
 
 class CommentView(APIView):
-    # 작성자가 로그인한 경우에만 댓글 작성 할 수 있도록 권한 설정 
-    # permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
     def get(self,request,article_id):
         comment = CommentModel.objects.filter(article=article_id)
-        # username = request.user.name
         serialized_data = CommentSerializer(comment, many=True).data   #queryset
-        # serialized_data["username"]=username
         return Response(serialized_data, status=status.HTTP_200_OK)
 
-    #댓글 작성 article id
     def post(self,request,article_id):
-        data = request.data.copy()
-        data["user"] = request.data.get("user")
+        data = copy.deepcopy(request.data)
+        data["user"] = request.user.id
         data["article"] = article_id
         data["content"] = request.data.get("content","")
-        data["id"] = request.data.get("comment_id","")
         comment_serializer = CommentSerializer(data=data)
-        print(comment_serializer.is_valid())
         if comment_serializer.is_valid():
             comment_serializer.save()
-            return Response({"result":"댓글 작성 완료"},status=status.HTTP_200_OK)
+            return Response({"result":"댓글 작성 완료!"},status=status.HTTP_200_OK)
         else:
-            return Response({"result":"댓글 작성 실패"},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"result":"댓글 작성 실패!"},status=status.HTTP_400_BAD_REQUEST)
 
     #업데이트
     def put(self,request,comment_id):
@@ -200,9 +194,17 @@ class CommentView(APIView):
 
     #삭제
     def delete(self,request,comment_id):
+        user = request.user.id
         comment = CommentModel.objects.get(id=comment_id)
-        comment.delete()
-        return Response(status=status.HTTP_200_OK)
+        if user == comment.user_id:
+            comment.delete()
+            return Response({"message": "댓글 삭제 완료."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "댓글 삭제 실패."},status=status.HTTP_400_BAD_REQUEST)
+        # comment = CommentModel.objects.get(id=comment_id)
+        # print(comment)
+        # comment.delete()
+        # return Response(status=status.HTTP_200_OK)
 
 
 
