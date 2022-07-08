@@ -262,7 +262,7 @@ def main():
 
     output_image = st.get_image(image_type)
     if output_image is not None:
-        save_image(f'data/{datetime.now().strftime("%Y%m%d-%H%M%S%f")}.png', output_image)
+        save_image(f'../team5_mulgam_front/data/{datetime.now().strftime("%Y%m%d-%H%M%S%f")}.png', output_image)
     with open('trace.json', 'w') as fp:
         json.dump(callback.get_trace(), fp, indent=4)
 

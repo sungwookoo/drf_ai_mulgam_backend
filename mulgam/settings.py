@@ -161,9 +161,9 @@ STATIC_URL = '/static/'
 # MEDIA_ROOT = BASE_DIR / 'media'
 # MEDIA_URL = '/media/'
 
-ALLOWED_HOSTS = [
-	'13.209.41.201'
-]
+# ALLOWED_HOSTS = [
+# 	'13.209.41.201'
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

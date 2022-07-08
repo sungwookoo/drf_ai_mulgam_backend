@@ -33,5 +33,6 @@ def mix(num):
     # cv2.imshow('img', img)
     # cv2.imshow('output', output)
     cv2.imwrite(f'gallery1/output/{datetime.now().strftime("%Y%m%d-%H%M%S%f")}.jpg', output)
+    cv2.imwrite(f'../team5_mulgam_front/gallery1/output/{datetime.now().strftime("%Y%m%d-%H%M%S%f")}.jpg', output)
     # cv2.waitKey(0)
 
